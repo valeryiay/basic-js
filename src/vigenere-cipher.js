@@ -20,13 +20,56 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(reverse = true) {
+    this.reverse = reverse;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    const messageUpperCase = message.toUpperCase();
+    const keyUpperCase = key.toUpperCase();
+    let encryptedMessage = '';
+
+    for (let i = 0, j = 0; i < message.length; i++) {
+      const char = messageUpperCase[i];
+      if (char.match(/[A-Z]/)) {
+        const shift = keyUpperCase[j % key.length].charCodeAt(0) - 65;
+        const encryptedChar = String.fromCharCode(((char.charCodeAt(0) + shift - 65) % 26) + 65);
+        encryptedMessage += encryptedChar;
+        j++;
+      } else {
+        encryptedMessage += char;
+      }
+    }
+
+    return this.reverse ? encryptedMessage : encryptedMessage.split('').reverse().join('');
+  }
+
+  decrypt(encryptedMessage, key) {
+    if (!encryptedMessage || !key) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    const encryptedMessageUpperCase = encryptedMessage.toUpperCase();
+    const keyUpperCase = key.toUpperCase();
+    let decryptedMessage = '';
+
+    for (let i = 0, j = 0; i < encryptedMessage.length; i++) {
+      const char = encryptedMessageUpperCase[i];
+      if (char.match(/[A-Z]/)) {
+        const shift = keyUpperCase[j % key.length].charCodeAt(0) - 65;
+        const decryptedChar = String.fromCharCode(((char.charCodeAt(0) - shift + 26 - 65) % 26) + 65);
+        decryptedMessage += decryptedChar;
+        j++;
+      } else {
+        decryptedMessage += char;
+      }
+    }
+
+    return this.reverse ? decryptedMessage : decryptedMessage.split('').reverse().join('');
   }
 }
 
